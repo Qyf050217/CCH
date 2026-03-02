@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.zust.cch.common.Constants;
 import com.zust.cch.dto.IdentityLoginDTO;
 import com.zust.cch.dto.MailAuthDTO;
+import com.zust.cch.dto.UpdateProfileDTO;
 import com.zust.cch.entity.User;
 import com.zust.cch.exception.BusinessException;
 import com.zust.cch.mapper.UserMapper;
@@ -69,5 +70,25 @@ public class UserServiceImpl implements UserService {
         }
 
         return genToken(user);
+    }
+
+    @Override
+    public void updateProfile(Integer userId, UpdateProfileDTO profileDTO) {
+        String newUserName = profileDTO.userName();
+        User existUser = userMapper.selectByIdentity(newUserName);
+        if (existUser != null && !existUser.getId().equals(userId)) {
+            throw new BusinessException(400, "该用户名已被占用");
+        }
+        String encryptedPassword = MD5Utils.code(profileDTO.password());
+        userMapper.updateUserProfile(userId, newUserName, profileDTO.codeforcesName(), encryptedPassword);
+    }
+
+    @Override
+    public User userInfoById(Integer id) {
+        User user = userMapper.selectById(id);
+        if (user == null) {
+            throw new BusinessException("该用户不存在");
+        }
+        return user;
     }
 }
