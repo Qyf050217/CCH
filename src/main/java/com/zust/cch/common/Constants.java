@@ -6,8 +6,7 @@ package com.zust.cch.common;
 public final class Constants {
 
     // 私有化构造方法，常量类不需要被实例化
-    private Constants() {
-    }
+    private Constants() {}
 
     // ==================== Redis Key 前缀 ====================
 
@@ -20,6 +19,9 @@ public final class Constants {
      * CF 比赛排名数据的 Redis Key 前缀
      */
     public static final String REDIS_KEY_CF_STANDINGS = "cch:cf:standings:";
+
+
+
 
     // ==================== 业务默认值 ====================
 
@@ -38,6 +40,13 @@ public final class Constants {
      */
     public static final int passwordMaxLen = 20;
     public static final int passwordMinLen = 6;
+    public static final String DEFAULT_USER_PASSWORD = "123456";
+    /**
+     * 发件邮箱
+     */
+    public static final String sendMailBot = "zustemailbot@qq.com";
+
+
 
     // ==================== Token 与安全验证 ====================
 
