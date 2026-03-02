@@ -1,0 +1,36 @@
+package com.zust.cch.controller;
+
+import com.zust.cch.common.Result;
+import com.zust.cch.dto.IdentityLoginDTO;
+import com.zust.cch.dto.MailAuthDTO;
+import com.zust.cch.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@Slf4j
+@RestController
+@RequestMapping("/user")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+
+    @PostMapping("/login")
+    public Result<String> login(@Validated @RequestBody IdentityLoginDTO loginDTO) {
+        String token = userService.login(loginDTO);
+        return Result.success(token);
+    }
+
+    @PostMapping("/register")
+    public Result<String> emailLogin(@Validated @RequestBody MailAuthDTO authDTO) {
+        String token = userService.loginOrRegisterByMail(authDTO);
+        return Result.success(token);
+    }
+}
