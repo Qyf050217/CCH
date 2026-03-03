@@ -59,4 +59,10 @@ public final class Constants {
      * 验证码的有效期（单位：分钟）
      */
     public static final long MAIL_CODE_EXPIRE_MINUTES = 5L;
+
+
+    // ==================== API ====================
+
+    public static final String API_Codeforces_UserExist = "https://codeforces.com/api/user.info?handles=";
+
 }

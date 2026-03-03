@@ -4,9 +4,11 @@ import cn.hutool.core.util.RandomUtil;
 import com.zust.cch.common.Constants;
 import com.zust.cch.dto.IdentityLoginDTO;
 import com.zust.cch.dto.MailAuthDTO;
+import com.zust.cch.dto.UpdateProfileDTO;
 import com.zust.cch.entity.User;
 import com.zust.cch.exception.BusinessException;
 import com.zust.cch.mapper.UserMapper;
+import com.zust.cch.service.CfUserService;
 import com.zust.cch.service.UserService;
 import com.zust.cch.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,9 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private StringRedisTemplate redisTemplate;
+    @Autowired
+    private CfUserService cfUserService;
 
-    /**
-     * 登录
-     */
     @Override
     public String login(IdentityLoginDTO loginDTO) {
         String identity = loginDTO.identity();
@@ -44,9 +45,6 @@ public class UserServiceImpl implements UserService {
         return genToken(user);
     }
 
-    /**
-     * 邮箱注册或登录
-     */
     @Override
     public String loginOrRegisterByMail(MailAuthDTO authDTO) {
         String mail = authDTO.mail();
@@ -66,8 +64,30 @@ public class UserServiceImpl implements UserService {
             user.setPassword(MD5Utils.code(Constants.DEFAULT_USER_PASSWORD));
             user.setCodeforcesName(Constants.DEFAULT_CF_NAME);
             userMapper.insertUser(user);
+            String cfHandle = user.getCodeforcesName();
+            cfUserService.insertCfUser(cfHandle);
         }
 
         return genToken(user);
+    }
+
+    @Override
+    public void updateProfile(Integer userId, UpdateProfileDTO profileDTO) {
+        String newUserName = profileDTO.userName();
+        User existUser = userMapper.selectByIdentity(newUserName);
+        if (existUser != null && !existUser.getId().equals(userId)) {
+            throw new BusinessException(400, "该用户名已被占用");
+        }
+        String encryptedPassword = MD5Utils.code(profileDTO.password());
+        userMapper.updateUserProfile(userId, newUserName, profileDTO.codeforcesName(), encryptedPassword);
+    }
+
+    @Override
+    public User userInfoById(Integer id) {
+        User user = userMapper.selectById(id);
+        if (user == null) {
+            throw new BusinessException("该用户不存在");
+        }
+        return user;
     }
 }

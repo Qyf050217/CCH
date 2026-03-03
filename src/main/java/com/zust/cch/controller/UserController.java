@@ -1,16 +1,20 @@
 package com.zust.cch.controller;
 
+import com.zust.cch.common.Constants;
 import com.zust.cch.common.Result;
 import com.zust.cch.dto.IdentityLoginDTO;
 import com.zust.cch.dto.MailAuthDTO;
+import com.zust.cch.dto.UpdateProfileDTO;
+import com.zust.cch.entity.User;
 import com.zust.cch.service.UserService;
+import com.zust.cch.utils.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 
 @Slf4j
@@ -32,5 +36,32 @@ public class UserController {
     public Result<String> emailLogin(@Validated @RequestBody MailAuthDTO authDTO) {
         String token = userService.loginOrRegisterByMail(authDTO);
         return Result.success(token);
+    }
+
+
+    @PostMapping("/update-profile")
+    public Result<Void> updateProfile(
+            @Validated @RequestBody UpdateProfileDTO profileDTO,
+            HttpServletRequest request) {
+
+        String token = request.getHeader(Constants.TOKEN_HEADER);
+        if (token == null || token.isEmpty()) {
+            return Result.error(401, "未登录或 Token 已失效，请重新登录");
+        }
+
+        try {
+            Map<String, Object> claims = JwtUtil.parseToken(token);
+            Integer userId = (Integer) claims.get("id");
+            userService.updateProfile(userId, profileDTO);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error(401, "登录身份验证失败，请重新登录");
+        }
+    }
+
+    @GetMapping("/profile/{id}")
+    public Result<User> userInfoById(@PathVariable Integer id) {
+        User user = userService.userInfoById(id);
+        return Result.success(user);
     }
 }

@@ -12,7 +12,7 @@ public class Result<T> {
 
     // ================== 成功相关的方法 ==================
     /**
-     * 成功，但不返回具体数据 (例如：删除用户成功、退出登录成功)
+     * 成功，但不返回具体数据
      */
     public static <T> Result<T> success() {
         Result<T> result = new Result<>();
