@@ -34,7 +34,14 @@ public class CfUserServiceImpl implements CfUserService {
         }
     }
 
+    @Override
     public void insertCfUser(String cfHandle) {
+        CfUser existUser = cfUserMapper.selectByHandle(cfHandle);
+        if (existUser != null) {
+            log.info("用户 {} 已存在", cfHandle);
+            return;
+        }
+
         String url = API_Codeforces_UserExist + cfHandle;
         String responseStr = HttpUtil.get(url, 5000);
         JSONObject json = JSONUtil.parseObj(responseStr);
@@ -42,7 +49,6 @@ public class CfUserServiceImpl implements CfUserService {
             throw new BusinessException(400, "该 Codeforces 账号不存在，请检查拼写");
         }
         JSONObject userInfo = json.getJSONArray("result").getJSONObject(0);
-
         CfUser cfUser = new CfUser();
         cfUser.setCfHandle(userInfo.getStr("handle"));
         cfUser.setAvatar(userInfo.getStr("avatar"));

@@ -21,7 +21,7 @@ public class FollowServiceImpl implements FollowService {
         if (userFollowMapper.checkFollowStatus(userId, cfHandle) > 0) {
             throw new BusinessException(400, "已经关注过该账号了");
         }
-        cfUserService.checkCfUserExist(cfHandle);
+        cfUserService.insertCfUser(cfHandle);
         userFollowMapper.insertFollow(userId, cfHandle);
     }
 
