@@ -2,15 +2,15 @@ package com.zust.cch.controller;
 
 import com.zust.cch.common.Result;
 import com.zust.cch.dto.FollowDTO;
+import com.zust.cch.entity.CfUser;
 import com.zust.cch.service.FollowService;
 import com.zust.cch.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -34,5 +34,12 @@ public class FollowController {
         String cfHandle = followDTO.cfHandle();
         followService.unfollow(userId, cfHandle);
         return Result.success();
+    }
+
+    @GetMapping("/list")
+    public Result<List<CfUser>> list() {
+        Integer userId = UserHolder.getUserId();
+        List<CfUser> list = followService.getFollowList(userId);
+        return Result.success(list);
     }
 }
