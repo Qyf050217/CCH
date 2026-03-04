@@ -23,5 +23,5 @@ public interface CfUserMapper {
     List<CfUser> selectFollowListByUserId(Integer userId);
 
     @Select("SELECT cf_handle, current_rating, max_rating, avatar FROM cf_user WHERE cf_handle = #{handle}")
-    CfUser getCfUserInfoByHandle(String handle);
+    CfUser selectCfUserInfoByHandle(String handle);
 }

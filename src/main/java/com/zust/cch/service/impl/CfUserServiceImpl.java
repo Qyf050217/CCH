@@ -35,11 +35,11 @@ public class CfUserServiceImpl implements CfUserService {
     }
 
     @Override
-    public void insertCfUser(String cfHandle) {
+    public CfUser insertCfUser(String cfHandle) {
         CfUser existUser = cfUserMapper.selectByHandle(cfHandle);
         if (existUser != null) {
             log.info("用户 {} 已存在", cfHandle);
-            return;
+            return existUser;
         }
 
         String url = API_Codeforces_UserExist + cfHandle;
@@ -55,6 +55,15 @@ public class CfUserServiceImpl implements CfUserService {
         cfUser.setCurrentRating(userInfo.getInt("rating", 0));
         cfUser.setMaxRating(userInfo.getInt("maxRating", 0));
         cfUserMapper.insertCfUser(cfUser);
+        return cfUser;
     }
 
+    @Override
+    public CfUser getCfUserInfoByHandle(String handle) {
+        CfUser cfUser = cfUserMapper.selectByHandle(handle);
+        if (cfUser == null) {
+            throw new BusinessException("该用户不存在");
+        }
+        return cfUser;
+    }
 }
