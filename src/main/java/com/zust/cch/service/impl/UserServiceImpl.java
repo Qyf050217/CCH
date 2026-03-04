@@ -90,4 +90,8 @@ public class UserServiceImpl implements UserService {
         }
         return user;
     }
+
+    public User findById(Integer userId) {
+        return userMapper.selectById(userId);
+    }
 }
