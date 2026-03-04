@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper
 public interface CfUserMapper {
-    @Insert("INSERT INTO cf_user(cf_handle, avatar,current_rating) VALUES(#{cfHandle}, #{avatar}, #{currentRating})")
+    @Insert("INSERT INTO cf_user(cf_handle, avatar,current_rating,max_rating) VALUES(#{cfHandle}, #{avatar}, #{currentRating}, #{maxRating})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertCfUser(CfUser cfUser);
 
@@ -21,4 +21,7 @@ public interface CfUserMapper {
             "INNER JOIN user_follow f ON c.cf_handle = f.cf_handle " +
             "WHERE f.user_id = #{userId}")
     List<CfUser> selectFollowListByUserId(Integer userId);
+
+    @Select("SELECT cf_handle, current_rating, max_rating, avatar FROM cf_user WHERE cf_handle = #{handle}")
+    CfUser getCfUserInfoByHandle(String handle);
 }

@@ -64,4 +64,6 @@ public class UserController {
         User user = userService.userInfoById(id);
         return Result.success(user);
     }
+
+
 }

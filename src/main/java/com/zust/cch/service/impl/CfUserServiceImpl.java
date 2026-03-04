@@ -53,6 +53,7 @@ public class CfUserServiceImpl implements CfUserService {
         cfUser.setCfHandle(userInfo.getStr("handle"));
         cfUser.setAvatar(userInfo.getStr("avatar"));
         cfUser.setCurrentRating(userInfo.getInt("rating", 0));
+        cfUser.setMaxRating(userInfo.getInt("maxRating", 0));
         cfUserMapper.insertCfUser(cfUser);
     }
 
