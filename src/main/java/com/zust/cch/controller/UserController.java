@@ -6,6 +6,7 @@ import com.zust.cch.dto.IdentityLoginDTO;
 import com.zust.cch.dto.MailAuthDTO;
 import com.zust.cch.dto.UpdateProfileDTO;
 import com.zust.cch.entity.User;
+import com.zust.cch.exception.BusinessException;
 import com.zust.cch.service.UserService;
 import com.zust.cch.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,10 +46,6 @@ public class UserController {
             HttpServletRequest request) {
 
         String token = request.getHeader(Constants.TOKEN_HEADER);
-        if (token == null || token.isEmpty()) {
-            return Result.error(401, "未登录或 Token 已失效，请重新登录");
-        }
-
         try {
             Map<String, Object> claims = JwtUtil.parseToken(token);
             Integer userId = (Integer) claims.get("id");
@@ -65,5 +62,18 @@ public class UserController {
         return Result.success(user);
     }
 
+    @GetMapping("/userInfo")
+    public Result<User> getUserInfo(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
 
+        try {
+            Map<String, Object> claims = JwtUtil.parseToken(token);
+            Integer userId = (Integer) claims.get("id");
+            User user = userService.findById(userId);
+            user.setPassword("");
+            return Result.success(user);
+        } catch (Exception e) {
+            throw new BusinessException(401, "登录已失效");
+        }
+    }
 }

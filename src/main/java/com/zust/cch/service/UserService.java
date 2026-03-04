@@ -15,4 +15,6 @@ public interface UserService {
     void updateProfile(Integer userId, UpdateProfileDTO profileDTO);
 
     User userInfoById(Integer id);
+
+    User findById(Integer userId);
 }
