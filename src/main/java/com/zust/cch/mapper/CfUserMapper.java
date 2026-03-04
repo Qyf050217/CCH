@@ -21,7 +21,4 @@ public interface CfUserMapper {
             "INNER JOIN user_follow f ON c.cf_handle = f.cf_handle " +
             "WHERE f.user_id = #{userId}")
     List<CfUser> selectFollowListByUserId(Integer userId);
-
-    @Select("SELECT cf_handle, current_rating, max_rating, avatar FROM cf_user WHERE cf_handle = #{handle}")
-    CfUser selectCfUserInfoByHandle(String handle);
 }
