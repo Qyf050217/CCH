@@ -20,7 +20,7 @@ public class CfUserController {
     @Autowired
     private CfUserService cfUserService;
 
-    // 数据库里存的cf用户信息
+    // 数据库里存的 cf 用户信息
     @GetMapping("/infoDb/{handle}")
     public Result<CfUser> cfDbInfo(@PathVariable String handle) {
         CfUser cfUser = cfUserService.getCfUserInfoByHandle(handle);
