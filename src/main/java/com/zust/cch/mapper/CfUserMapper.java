@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper
 public interface CfUserMapper {
-    @Insert("INSERT INTO cf_user(cf_handle, avatar,current_rating) VALUES(#{cfHandle}, #{avatar}, #{currentRating})")
+    @Insert("INSERT INTO cf_user(cf_handle, avatar,current_rating,max_rating) VALUES(#{cfHandle}, #{avatar}, #{currentRating}, #{maxRating})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertCfUser(CfUser cfUser);
 

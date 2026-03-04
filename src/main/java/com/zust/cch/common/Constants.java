@@ -15,13 +15,6 @@ public final class Constants {
      */
     public static final String REDIS_KEY_MAIL_CODE = "cch:mail:code:";
 
-    /**
-     * CF 比赛排名数据的 Redis Key 前缀
-     */
-    public static final String REDIS_KEY_CF_STANDINGS = "cch:cf:standings:";
-
-
-
 
     // ==================== 业务默认值 ====================
 
@@ -64,5 +57,5 @@ public final class Constants {
     // ==================== API ====================
 
     public static final String API_Codeforces_UserExist = "https://codeforces.com/api/user.info?handles=";
-
+    public static final String API_Codeforces_UserContest = "https://codeforces.com/api/user.rating?handle=";
 }

@@ -7,4 +7,5 @@ public class CfUser {
     private String cfHandle;
     private String avatar;
     private Integer currentRating;
+    private Integer maxRating;
 }
