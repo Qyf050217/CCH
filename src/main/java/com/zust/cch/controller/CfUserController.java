@@ -1,6 +1,7 @@
 package com.zust.cch.controller;
 
 import com.zust.cch.common.Result;
+import com.zust.cch.entity.CfRatingHistory;
 import com.zust.cch.entity.CfUser;
 import com.zust.cch.service.CfUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/cf-user")
@@ -35,8 +36,8 @@ public class CfUserController {
 
     // 比赛信息
     @GetMapping("/contest/{handle}")
-    public Result<List<Map<String, Object>>> getCfUserRatingContestHistory(@PathVariable String handle) {
-        List<Map<String, Object>> history = cfUserService.getCfUserRatingContestHistory(handle);
+    public Result<List<CfRatingHistory>> getCfUserRatingContestHistory(@PathVariable String handle) {
+        List<CfRatingHistory> history = cfUserService.getHistory(handle);
         return Result.success(history);
     }
 }
