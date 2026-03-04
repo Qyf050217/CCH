@@ -2,6 +2,7 @@ package com.zust.cch.controller;
 
 import com.zust.cch.common.Result;
 import com.zust.cch.dto.FollowDTO;
+import com.zust.cch.dto.FollowListDTO;
 import com.zust.cch.entity.CfUser;
 import com.zust.cch.service.FollowService;
 import com.zust.cch.utils.UserHolder;
@@ -36,10 +37,9 @@ public class FollowController {
         return Result.success();
     }
 
-    @GetMapping("/list")
-    public Result<List<CfUser>> list() {
-        Integer userId = UserHolder.getUserId();
-        List<CfUser> list = followService.getFollowList(userId);
+    @PostMapping("/list")
+    public Result<List<CfUser>> list(@Validated @RequestBody FollowListDTO followListDTO) {
+        List<CfUser> list = followService.getFollowList(followListDTO.userId());
         return Result.success(list);
     }
 }
