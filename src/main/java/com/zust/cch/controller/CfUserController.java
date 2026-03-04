@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/cf-user")
@@ -29,5 +31,12 @@ public class CfUserController {
     public Result<CfUser> cfWebInfo(@PathVariable String handle) {
         CfUser cfUser = cfUserService.insertCfUser(handle);
         return Result.success(cfUser);
+    }
+
+    // 比赛信息
+    @GetMapping("/contest/{handle}")
+    public Result<List<Map<String, Object>>> getCfUserRatingContestHistory(@PathVariable String handle) {
+        List<Map<String, Object>> history = cfUserService.getCfUserRatingContestHistory(handle);
+        return Result.success(history);
     }
 }
