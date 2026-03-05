@@ -18,8 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**") // 默认拦截所有路径
                 .excludePathPatterns(   // 排除不需要登录就能访问的接口
                         "/user/login",
-                        "/user/email-login",
-                        "/user/send-code"
+                        "/user/register",
+                        "/mail/send-code"
                 );
     }
 }

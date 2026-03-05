@@ -2,20 +2,16 @@ package com.zust.cch.service.impl;
 
 import com.zust.cch.dto.CreatePostDTO;
 import com.zust.cch.dto.CreateCommentDTO;
-import com.zust.cch.entity.Comment_like;
 import com.zust.cch.entity.Post;
 import com.zust.cch.entity.Comment;
-import com.zust.cch.entity.Post_like;
 import com.zust.cch.exception.BusinessException;
 import com.zust.cch.mapper.ForumMapper;
 import com.zust.cch.service.ForumService;
-import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.ast.NullLiteral;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -178,6 +174,4 @@ public class ForumServiceImpl implements ForumService {
         int offset = (page - 1) * size;
         return forumMapper.selectComments(postId, offset, size);
     }
-
-
 }
