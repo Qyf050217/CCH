@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
             user.setCodeforcesName(Constants.DEFAULT_CF_NAME);
             userMapper.insertUser(user);
             String cfHandle = user.getCodeforcesName();
-            cfUserService.insertCfUser(cfHandle);
+            // cfUserService.insertCfUser(cfHandle);
         }
 
         return genToken(user);
@@ -84,6 +84,7 @@ public class UserServiceImpl implements UserService {
         if (existUser != null && !existUser.getId().equals(userId)) {
             throw new BusinessException(400, "该用户名已被占用");
         }
+        cfUserService.insertCfUser(profileDTO.codeforcesName());
         String encryptedPassword = MD5Utils.code(profileDTO.password());
         userMapper.updateUserProfile(userId, newUserName, profileDTO.codeforcesName(), encryptedPassword);
     }
