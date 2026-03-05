@@ -25,6 +25,21 @@ public class ForumServiceImpl implements ForumService {
     private ForumMapper forumMapper;
 
     @Override
+    public int getPostRowCount() {
+        return forumMapper.countPostRows();
+    }
+
+    @Override
+    public int getCommentRowCount() {
+        return forumMapper.countCommentRows();
+    }
+
+    @Override
+    public int getUserRowCount() {
+        return forumMapper.countUserRows();
+    }
+
+    @Override
     public Post createPost(Integer userId, CreatePostDTO postDTO) {
         Post post = new Post();
         post.setUserId(userId);
@@ -35,11 +50,32 @@ public class ForumServiceImpl implements ForumService {
         return post;
     }
 
+//    @Override
+//    public void deletePost(Integer userId, Integer postId) {
+//        Post post = forumMapper.selectPostById(postId);
+//        if (post == null) throw new BusinessException("帖子不存在");
+//        if (!post.getUserId().equals(userId)) throw new BusinessException("无权限删除帖子");
+//        forumMapper.deletePost(postId);
+//    }
     @Override
+    @Transactional
     public void deletePost(Integer userId, Integer postId) {
         Post post = forumMapper.selectPostById(postId);
         if (post == null) throw new BusinessException("帖子不存在");
         if (!post.getUserId().equals(userId)) throw new BusinessException("无权限删除帖子");
+
+        // 1. 获取该帖子的所有评论
+        List<Comment> comments = forumMapper.selectComments(postId, 0, 1000);
+
+        // 2. 遍历评论并删除
+        for (Comment comment : comments) {
+            // 通过评论ID删除评论
+            forumMapper.deleteComment(comment.getId()); // 删除评论
+            // 帖子评论数 -1
+            forumMapper.decreasePostCommentCount(postId);
+        }
+
+        // 3. 删除帖子
         forumMapper.deletePost(postId);
     }
 
@@ -57,6 +93,11 @@ public class ForumServiceImpl implements ForumService {
             forumMapper.deletePostLike(userId, postId);
             forumMapper.decreasePostLikeCount(postId);
         }
+    }
+
+    @Override
+    public List<Post> listPost() {
+        return forumMapper.selectPostList();
     }
 
     @Override

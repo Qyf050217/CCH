@@ -11,6 +11,14 @@ import java.util.List;
 
 @Service
 public interface ForumService {
+    // 获取 post 表的行数
+    int getPostRowCount();
+
+    // 获取 comment 表的行数
+    int getCommentRowCount();
+
+    // 获取 user 表的行数
+    int getUserRowCount();
 
     // 发帖
     Post createPost(Integer userId, CreatePostDTO postDTO);
@@ -20,6 +28,9 @@ public interface ForumService {
 
     // 帖子点赞
     void likePost(Integer userId, Integer postId);
+
+    // 获取帖子列表
+    List<Post> listPost();
 
     // 发评论
     Comment addComment(Integer userId, Integer postId, CreateCommentDTO commentDTO);

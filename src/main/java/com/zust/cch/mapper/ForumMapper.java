@@ -11,6 +11,18 @@ import java.util.List;
 @Mapper
 public interface ForumMapper {
 
+    // 查询 post 表的行数
+    @Select("SELECT COUNT(*) FROM post")
+    int countPostRows();
+
+    // 查询 comment 表的行数
+    @Select("SELECT COUNT(*) FROM comment")
+    int countCommentRows();
+
+    // 查询 user 表的行数
+    @Select("SELECT COUNT(*) FROM user")  // 假设表名是 user，如果不是根据实际修改
+    int countUserRows();
+
     // 帖子
     @Insert("INSERT INTO post(user_id,title,content) VALUES(#{userId},#{title},#{content})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
@@ -27,6 +39,10 @@ public interface ForumMapper {
 
     @Delete("DELETE FROM comment WHERE id=#{commentId}")
     void deleteComment(Integer commentId);
+
+    // 查询所有帖子（按创建时间倒序）
+    @Select("SELECT * FROM post ORDER BY created_at DESC")
+    List<Post> selectPostList();
 
     // 判断是否已点赞
     @Select("""

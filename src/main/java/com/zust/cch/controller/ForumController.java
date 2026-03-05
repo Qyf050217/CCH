@@ -2,6 +2,7 @@ package com.zust.cch.controller;
 
 import com.zust.cch.dto.CreatePostDTO;
 import com.zust.cch.dto.CreateCommentDTO;
+import com.zust.cch.dto.ForumStats;
 import com.zust.cch.entity.Post;
 import com.zust.cch.entity.Comment;
 import com.zust.cch.exception.BusinessException;
@@ -19,6 +20,38 @@ public class ForumController {
 
     @Autowired
     private ForumService forumService;
+
+    // 获取 post 表的行数
+    @GetMapping("/post/row-count")
+    public Result<Integer> getPostRowCount() {
+        int rowCount = forumService.getPostRowCount();
+        return Result.success(rowCount);
+    }
+
+    // 获取 comment 表的行数
+    @GetMapping("/comment/row-count")
+    public Result<Integer> getCommentRowCount() {
+        int rowCount = forumService.getCommentRowCount();
+        return Result.success(rowCount);
+    }
+
+    // 获取 user 表的行数
+    @GetMapping("/user/row-count")
+    public Result<Integer> getUserRowCount() {
+        int rowCount = forumService.getUserRowCount();
+        return Result.success(rowCount);
+    }
+
+    // 获取论坛统计信息
+    @GetMapping("/stats")
+    public Result<Object> getForumStats() {
+        int postCount = forumService.getPostRowCount();
+        int commentCount = forumService.getCommentRowCount();
+        int userCount = forumService.getUserRowCount();
+
+        // 将结果封装成一个对象返回
+        return Result.success(new ForumStats(postCount, commentCount, userCount));
+    }
 
     private Integer getCurrentUserId() {
         Integer userId = UserHolder.getUserId();
@@ -58,6 +91,11 @@ public class ForumController {
     public Result<Comment> addComment(@PathVariable Integer postId, @RequestBody CreateCommentDTO commentDTO) {
         Integer userId = UserHolder.getUserId();
         return Result.success(forumService.addComment(userId, postId, commentDTO));
+    }
+
+    @GetMapping("/posts")
+    public Result<List<Post>> listPost() {
+        return Result.success(forumService.listPost());
     }
 
     @PostMapping("/post/{postId}/comments")
