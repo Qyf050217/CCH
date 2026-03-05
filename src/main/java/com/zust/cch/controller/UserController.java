@@ -9,6 +9,7 @@ import com.zust.cch.entity.User;
 import com.zust.cch.exception.BusinessException;
 import com.zust.cch.service.UserService;
 import com.zust.cch.utils.JwtUtil;
+import com.zust.cch.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +58,8 @@ public class UserController {
     }
 
     @GetMapping("/profile/{id}")
-    public Result<User> userInfoById(@PathVariable Integer id) {
-        User user = userService.userInfoById(id);
+    public Result<UserVO> userInfoById(@PathVariable Integer id) {
+        UserVO user = userService.userInfoById(id);
         return Result.success(user);
     }
 

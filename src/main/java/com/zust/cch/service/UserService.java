@@ -4,6 +4,7 @@ import com.zust.cch.dto.IdentityLoginDTO;
 import com.zust.cch.dto.MailAuthDTO;
 import com.zust.cch.dto.UpdateProfileDTO;
 import com.zust.cch.entity.User;
+import com.zust.cch.vo.UserVO;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +15,7 @@ public interface UserService {
 
     void updateProfile(Integer userId, UpdateProfileDTO profileDTO);
 
-    User userInfoById(Integer id);
+    UserVO userInfoById(Integer id);
 
     User findById(Integer userId);
 }

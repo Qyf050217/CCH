@@ -7,10 +7,14 @@ import com.zust.cch.dto.MailAuthDTO;
 import com.zust.cch.dto.UpdateProfileDTO;
 import com.zust.cch.entity.User;
 import com.zust.cch.exception.BusinessException;
+import com.zust.cch.mapper.UserFollowMapper;
 import com.zust.cch.mapper.UserMapper;
 import com.zust.cch.service.CfUserService;
 import com.zust.cch.service.UserService;
 import com.zust.cch.utils.MD5Utils;
+import com.zust.cch.utils.UserHolder;
+import com.zust.cch.vo.UserVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -26,6 +30,8 @@ public class UserServiceImpl implements UserService {
     private StringRedisTemplate redisTemplate;
     @Autowired
     private CfUserService cfUserService;
+    @Autowired
+    private UserFollowMapper userFollowMapper;
 
     @Override
     public String login(IdentityLoginDTO loginDTO) {
@@ -83,12 +89,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User userInfoById(Integer id) {
+    public UserVO userInfoById(Integer id) {
         User user = userMapper.selectById(id);
         if (user == null) {
             throw new BusinessException("该用户不存在");
         }
-        return user;
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+        try {
+            Integer currentUserId = UserHolder.getUserId();
+            if (currentUserId != null && user.getCodeforcesName() != null && !currentUserId.equals(id)) {
+                int count = userFollowMapper.checkFollowStatus(currentUserId, user.getCodeforcesName());
+                userVO.setIsFollowed(count > 0);
+            } else {
+                userVO.setIsFollowed(false);
+            }
+        } catch (Exception e) {
+            userVO.setIsFollowed(false);
+        }
+        return userVO;
     }
 
     public User findById(Integer userId) {
