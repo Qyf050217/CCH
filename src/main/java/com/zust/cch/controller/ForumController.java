@@ -49,7 +49,7 @@ public class ForumController {
         int commentCount = forumService.getCommentRowCount();
         int userCount = forumService.getUserRowCount();
 
-        // 将结果封装成一个对象返回
+        // 将结果封装成一个对象 返回
         return Result.success(new ForumStats(postCount, commentCount, userCount));
     }
 
