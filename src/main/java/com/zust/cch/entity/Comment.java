@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class Comment {
     private Integer id;
     private Integer userId;
+    private String userName;
     private String title;
     private Integer postId;
     private String content;

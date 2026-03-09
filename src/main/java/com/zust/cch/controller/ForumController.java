@@ -21,6 +21,22 @@ public class ForumController {
     @Autowired
     private ForumService forumService;
 
+    private Integer getCurrentUserId() {
+        Integer userId = UserHolder.getUserId();
+        if (userId == null) {
+            throw new BusinessException("未登录或 token 失效");
+        }
+        return userId;
+    }
+
+    private String getCurrentUserName() {
+        String userName = UserHolder.getUserName();
+        if (userName == null) {
+            throw new BusinessException("未登录或 token 失效");
+        }
+        return userName;
+    }
+
     // 获取 post 表的行数
     @GetMapping("/post/row-count")
     public Result<Integer> getPostRowCount() {
@@ -53,19 +69,13 @@ public class ForumController {
         return Result.success(new ForumStats(postCount, commentCount, userCount));
     }
 
-    private Integer getCurrentUserId() {
-        Integer userId = UserHolder.getUserId();
-        if (userId == null) {
-            throw new BusinessException("未登录或 token 失效");
-        }
-        return userId;
-    }
-
     @PostMapping("/post")
     public Result<Post> createPost(@RequestBody CreatePostDTO postDTO) {
         // 从 UserHolder 拿到 userId
         Integer userId = getCurrentUserId();
-        return Result.success(forumService.createPost(userId, postDTO));
+        String userName = getCurrentUserName();
+
+        return Result.success(forumService.createPost(userId, userName, postDTO));
     }
 
     @DeleteMapping("/post/{postId}")
@@ -82,6 +92,13 @@ public class ForumController {
         return Result.success();
     }
 
+    @GetMapping("/post/{postId}/is-liked")
+    public Result<Boolean> isPostLiked(@PathVariable Integer postId) {
+        Integer userId = getCurrentUserId();
+        boolean isLiked = forumService.isPostLiked(userId, postId);
+        return Result.success(isLiked);
+    }
+
     @GetMapping("/post/{postId}")
     public Result<Post> getPost(@PathVariable Integer postId) {
         return Result.success(forumService.getPostById(postId));
@@ -89,8 +106,9 @@ public class ForumController {
 
     @PostMapping("/comment/{postId}")
     public Result<Comment> addComment(@PathVariable Integer postId, @RequestBody CreateCommentDTO commentDTO) {
-        Integer userId = UserHolder.getUserId();
-        return Result.success(forumService.addComment(userId, postId, commentDTO));
+        Integer userId = getCurrentUserId();
+        String userName = getCurrentUserName();
+        return Result.success(forumService.addComment(userId, userName, postId, commentDTO));
     }
 
     @GetMapping("/posts")

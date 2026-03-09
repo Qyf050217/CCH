@@ -24,7 +24,7 @@ public interface ForumMapper {
     int countUserRows();
 
     // 帖子
-    @Insert("INSERT INTO post(user_id,title,content) VALUES(#{userId},#{title},#{content})")
+    @Insert("INSERT INTO post(user_id,user_name,title,content) VALUES(#{userId},#{userName},#{title},#{content})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertPost(Post post);
 
@@ -44,14 +44,10 @@ public interface ForumMapper {
     @Select("SELECT * FROM post ORDER BY created_at DESC")
     List<Post> selectPostList();
 
-    // 判断是否已点赞
-    @Select("""
-        SELECT COUNT(*) 
-        FROM post_like 
-        WHERE user_id = #{userId} 
-        AND post_id = #{postId}
-    """)
-    int countPostLike(Integer userId, Integer postId);
+    // ForumMapper.java
+    // 查询当前用户是否对帖子点赞
+    @Select("SELECT COUNT(*) FROM post_like WHERE user_id = #{userId} AND post_id = #{postId}")
+    int checkPostLiked(@Param("userId") Integer userId, @Param("postId") Integer postId);
 
     // 插入点赞
     @Insert("""
@@ -101,9 +97,8 @@ public interface ForumMapper {
     """)
     int decreasePostCommentCount(Integer postId);
 
-
     // 评论
-    @Insert("INSERT INTO comment(post_id,user_id,content,floor) VALUES(#{postId},#{userId},#{content},#{floor})")
+    @Insert("INSERT INTO comment(post_id,user_id,user_name,content,floor) VALUES(#{postId},#{userId},#{userName},#{content},#{floor})")
     void insertComment(Comment comment);
 
     // 分页查询指定帖子的评论

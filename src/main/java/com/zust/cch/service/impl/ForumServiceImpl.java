@@ -2,15 +2,15 @@ package com.zust.cch.service.impl;
 
 import com.zust.cch.dto.CreatePostDTO;
 import com.zust.cch.dto.CreateCommentDTO;
-import com.zust.cch.entity.Comment_like;
-import com.zust.cch.entity.Post;
-import com.zust.cch.entity.Comment;
-import com.zust.cch.entity.Post_like;
+import com.zust.cch.entity.*;
 import com.zust.cch.exception.BusinessException;
 import com.zust.cch.mapper.ForumMapper;
+import com.zust.cch.mapper.UserMapper;
 import com.zust.cch.service.ForumService;
+
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.expression.spel.ast.NullLiteral;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +23,8 @@ public class ForumServiceImpl implements ForumService {
 
     @Autowired
     private ForumMapper forumMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public int getPostRowCount() {
@@ -40,9 +42,10 @@ public class ForumServiceImpl implements ForumService {
     }
 
     @Override
-    public Post createPost(Integer userId, CreatePostDTO postDTO) {
+    public Post createPost(Integer userId, String userName, CreatePostDTO postDTO) {
         Post post = new Post();
         post.setUserId(userId);
+        post.setUserName(userName);
         post.setTitle(postDTO.title());
         post.setContent(postDTO.content());
 
@@ -50,13 +53,6 @@ public class ForumServiceImpl implements ForumService {
         return post;
     }
 
-//    @Override
-//    public void deletePost(Integer userId, Integer postId) {
-//        Post post = forumMapper.selectPostById(postId);
-//        if (post == null) throw new BusinessException("帖子不存在");
-//        if (!post.getUserId().equals(userId)) throw new BusinessException("无权限删除帖子");
-//        forumMapper.deletePost(postId);
-//    }
     @Override
     @Transactional
     public void deletePost(Integer userId, Integer postId) {
@@ -81,18 +77,21 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public void likePost(Integer userId, Integer postId) {
-
-        int count = forumMapper.countPostLike(userId, postId);
-
-        if (count == 0) {
-            // 没点赞 → 点赞
+        try {
+            // 1. 尝试插入
             forumMapper.insertPostLike(userId, postId);
+            // 2. 插入成功，说明是第一次点赞
             forumMapper.increasePostLikeCount(postId);
-        } else {
-            // 已点赞 → 取消
+        } catch (DuplicateKeyException e) {
+            // 3. 捕获到重复异常，说明之前已经点过赞了，转为“取消点赞”逻辑
             forumMapper.deletePostLike(userId, postId);
             forumMapper.decreasePostLikeCount(postId);
         }
+    }
+
+    @Override
+    public boolean isPostLiked(Integer userId, Integer postId) {
+        return forumMapper.checkPostLiked(userId, postId) > 0;
     }
 
     @Override
@@ -101,7 +100,7 @@ public class ForumServiceImpl implements ForumService {
     }
 
     @Override
-    public Comment addComment(Integer userId, Integer postId, CreateCommentDTO commentDTO) {
+    public Comment addComment(Integer userId, String userName, Integer postId, CreateCommentDTO commentDTO) {
         Post post = forumMapper.selectPostById(postId);
         if (post == null) throw new BusinessException("帖子不存在");
 
@@ -109,6 +108,7 @@ public class ForumServiceImpl implements ForumService {
 
         Comment comment = new Comment();
         comment.setUserId(userId);
+        comment.setUserName(userName);
         comment.setPostId(postId);
         comment.setContent(commentDTO.content());
         comment.setFloor(floor);

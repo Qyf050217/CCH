@@ -21,7 +21,7 @@ public interface ForumService {
     int getUserRowCount();
 
     // 发帖
-    Post createPost(Integer userId, CreatePostDTO postDTO);
+    Post createPost(Integer userId, String userName, CreatePostDTO postDTO);
 
     // 删除帖子
     void deletePost(Integer userId, Integer postId);
@@ -29,11 +29,14 @@ public interface ForumService {
     // 帖子点赞
     void likePost(Integer userId, Integer postId);
 
+    // 检查当前用户是否点赞了指定帖子
+    boolean isPostLiked(Integer userId, Integer postId);
+
     // 获取帖子列表
     List<Post> listPost();
 
     // 发评论
-    Comment addComment(Integer userId, Integer postId, CreateCommentDTO commentDTO);
+    Comment addComment(Integer userId, String userName, Integer postId, CreateCommentDTO commentDTO);
 
     // 删除指定楼层的评论
     void deleteComment(Integer userId, Integer postId, Integer floor);

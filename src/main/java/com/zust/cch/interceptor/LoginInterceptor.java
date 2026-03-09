@@ -3,6 +3,9 @@ package com.zust.cch.interceptor;
 import com.zust.cch.common.Constants;
 import com.zust.cch.utils.JwtUtil;
 import com.zust.cch.utils.UserHolder;
+import com.zust.cch.mapper.UserMapper;
+import com.zust.cch.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +16,10 @@ import java.util.Map;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    private UserMapper userMapper;
+
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         // 从请求头拿到 Token
@@ -23,9 +30,16 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         try {
+            // 解析 Token 得到用户 id
             Map<String, Object> claims = JwtUtil.parseToken(token);
             Integer userId = (Integer) claims.get("id");
-            UserHolder.setUserId(userId);
+
+            // 通过 userId 获取 User 信息
+            User user = userMapper.selectById(userId);
+
+            // 将 User 对象存储到 ThreadLocal 中
+            UserHolder.setUser(user);
+            
             return true;
         } catch (Exception e) {
             response.setStatus(401);
